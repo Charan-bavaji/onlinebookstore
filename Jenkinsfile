@@ -6,7 +6,7 @@ pipeline {
             steps {
                 echo "cloning repository"
                 git branch: 'main',
-                    url: 'https://github.com/YOUR-USERNAME/YOUR-REPO.git'
+                    url: 'https://github.com/Charan-bavaji/onlinebookstore.git'
                 echo "repo cloned successfully"
             }
         }

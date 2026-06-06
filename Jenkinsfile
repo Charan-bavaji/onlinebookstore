@@ -19,11 +19,13 @@ pipeline {
             
         }
         stage("deploy"){
-            stpes{
-                echo"deploying to tomcat..."
-                deploy adapters:[
+            steps{
+                echo "deploying to tomcat..."
+                deploy adapters: [
                     tomcat9(
-                        credentialsId: 'tomcat-creds', path '', url: 'http://13.239.199.85:8090'
+                        credentialsId: 'tomcat-creds',
+                        path '',
+                        url: 'http://13.239.199.85:8090'
                     )
                 ],
                     contextPath: '',

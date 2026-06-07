@@ -35,6 +35,8 @@ pipeline {
             }
         }
 
+
+    }
         post {
     success {
         echo "✅ Build & Deploy SUCCESS"
@@ -46,6 +48,4 @@ pipeline {
         echo "Pipeline finished. Cleaning up if needed."
     }
 }
-
-    }
 }

@@ -30,7 +30,20 @@ pipeline {
             }
         }
 
+        stage("prod warning") {
+            when {
+                expression { params.DEPLOY_ENV == 'prod' }
+            }
+            steps {
+                echo "⚠️ WARNING - Deploying to PRODUCTION environment!"
+                echo "Make sure this has been tested in staging first!"
+            }
+        }
+
         stage("deploy") {
+            when {
+                expression { params.BRANCH == 'master' }
+            }
             steps {
                 echo "deploying ${env.APP_NAME} to ${env.TOMCAT_URL} (env: ${params.DEPLOY_ENV})"
                 deploy adapters: [

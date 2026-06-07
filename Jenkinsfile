@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    environment {
+       TOMCAT_URL = 'https://localhost:8080'
+       APP_NAME = 'onlinebookstore'
+    }
     stages {
 
         stage("git_checkout") {
@@ -26,7 +30,7 @@ pipeline {
                     tomcat9(
                         credentialsId: 'tomcat-creds',
                         path: '',
-                        url: 'http://localhost:8090'
+                        url: ${TOMCAT_URL}
                     )
                 ],
                 contextPath: '',

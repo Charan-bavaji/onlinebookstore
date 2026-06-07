@@ -1,15 +1,22 @@
 pipeline {
     agent any
-    environment {
-       TOMCAT_URL = 'https://localhost:8080'
-       APP_NAME = 'onlinebookstore'
-    }
-    stages {
 
+    parameters {
+        string(name: 'BRANCH', defaultValue: 'master', description: 'Branch to build')
+        choice(name: 'DEPLOY_ENV', choices: ['dev', 'staging', 'prod'], description: 'Target environment')
+    }
+
+    environment {
+        TOMCAT_URL = 'http://localhost:8090'
+        APP_NAME   = 'onlinebookstore'
+        WAR_FILE   = 'target/*.war'
+    }
+
+    stages {
         stage("git_checkout") {
             steps {
-                echo "cloning repository"
-                git branch: 'master',
+                echo "cloning repository from branch: ${params.BRANCH}"
+                git branch: "${params.BRANCH}",
                     url: 'https://github.com/Charan-bavaji/onlinebookstore.git'
                 echo "repo cloned successfully"
             }
@@ -17,7 +24,7 @@ pipeline {
 
         stage("build") {
             steps {
-                echo "building project..."
+                echo "building ${env.APP_NAME}..."
                 sh 'mvn clean package -DskipTests'
                 echo "build successful!"
             }
@@ -25,31 +32,30 @@ pipeline {
 
         stage("deploy") {
             steps {
-                echo "deploying to tomcat..."
+                echo "deploying ${env.APP_NAME} to ${env.TOMCAT_URL} (env: ${params.DEPLOY_ENV})"
                 deploy adapters: [
                     tomcat9(
                         credentialsId: 'tomcat-creds',
                         path: '',
-                        url: ${TOMCAT_URL}
+                        url: "${env.TOMCAT_URL}"
                     )
                 ],
-                contextPath: '',
-                war: 'target/*.war'
+                contextPath: "${env.APP_NAME}",
+                war: "${env.WAR_FILE}"
                 echo "deployed successfully!"
             }
         }
+    }
 
-
+    post {
+        success {
+            echo "✅ Pipeline SUCCESS - ${env.APP_NAME} deployed to ${params.DEPLOY_ENV}"
+        }
+        failure {
+            echo "❌ Pipeline FAILED - check logs above"
+        }
+        always {
+            echo "Pipeline completed. Branch: ${params.BRANCH} | Env: ${params.DEPLOY_ENV}"
+        }
     }
-        post {
-    success {
-        echo "✅ Build & Deploy SUCCESS"
-    }
-    failure {
-        echo "❌ Build or Deploy FAILED"
-    }
-    always {
-        echo "Pipeline finished. Cleaning up if needed."
-    }
-}
 }

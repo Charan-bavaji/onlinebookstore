@@ -35,5 +35,17 @@ pipeline {
             }
         }
 
+        post {
+    success {
+        echo "✅ Build & Deploy SUCCESS"
+    }
+    failure {
+        echo "❌ Build or Deploy FAILED"
+    }
+    always {
+        echo "Pipeline finished. Cleaning up if needed."
+    }
+}
+
     }
 }

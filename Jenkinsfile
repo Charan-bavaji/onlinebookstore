@@ -63,7 +63,7 @@ pipeline {
     post {
         success {
             echo "✅ Pipeline SUCCESS - ${env.APP_NAME} deployed to ${params.DEPLOY_ENV}"
-            mail to: 'your@gmail.com',
+            mail to: 'charan.r7760@gmail.com',
                  subject: "✅ SUCCESS: ${env.APP_NAME} - Build #${currentBuild.number}",
                  body: """
 Build succeeded!
@@ -78,7 +78,7 @@ Build URL  : ${currentBuild.absoluteUrl}
         }
         failure {
             echo "❌ Pipeline FAILED - check logs above"
-            mail to: 'your@gmail.com',
+            mail to: 'charan.r7760@gmail.com',
                  subject: "❌ FAILED: ${env.APP_NAME} - Build #${currentBuild.number}",
                  body: """
 Build failed!

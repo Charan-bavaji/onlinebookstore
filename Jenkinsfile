@@ -24,7 +24,7 @@ pipeline {
 
         stage("build") {
             steps {
-                echo "building ${env.APP_NAME}..."
+                echo "building ${env.APP_NAME} on DEV branch..."
                 sh 'mvn clean package -DskipTests'
                 echo "build successful!"
             }

@@ -24,7 +24,7 @@ pipeline {
 
         stage("build") {
             steps {
-                echo "building ${env.APP_NAME} on DEV branch..."
+                echo "building ${env.APP_NAME}..."
                 sh 'mvn clean package -DskipTests'
                 echo "build successful!"
             }
@@ -63,12 +63,36 @@ pipeline {
     post {
         success {
             echo "✅ Pipeline SUCCESS - ${env.APP_NAME} deployed to ${params.DEPLOY_ENV}"
+            mail to: 'your@gmail.com',
+                 subject: "✅ SUCCESS: ${env.APP_NAME} - Build #${currentBuild.number}",
+                 body: """
+Build succeeded!
+-----------------
+App        : ${env.APP_NAME}
+Branch     : ${params.BRANCH}
+Environment: ${params.DEPLOY_ENV}
+Build #    : ${currentBuild.number}
+Duration   : ${currentBuild.durationString}
+Build URL  : ${currentBuild.absoluteUrl}
+                 """
         }
         failure {
             echo "❌ Pipeline FAILED - check logs above"
+            mail to: 'your@gmail.com',
+                 subject: "❌ FAILED: ${env.APP_NAME} - Build #${currentBuild.number}",
+                 body: """
+Build failed!
+-----------------
+App        : ${env.APP_NAME}
+Branch     : ${params.BRANCH}
+Environment: ${params.DEPLOY_ENV}
+Build #    : ${currentBuild.number}
+Duration   : ${currentBuild.durationString}
+Check logs : ${currentBuild.absoluteUrl}
+                 """
         }
         always {
-            echo "Pipeline completed. Branch: ${params.BRANCH} | Env: ${params.DEPLOY_ENV}"
+            echo "Pipeline completed. Branch: ${params.BRANCH} | Env: ${params.DEPLOY_ENV} | Status: ${currentBuild.currentResult}"
         }
     }
 }

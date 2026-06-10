@@ -65,6 +65,7 @@ pipeline {
                     sh 'echo "Build triggered by: ${env.BUILD_USER}"'
                 }
             }
+        }
     }
 
     post {

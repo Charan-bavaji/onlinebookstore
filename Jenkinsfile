@@ -58,6 +58,13 @@ pipeline {
                 echo "deployed successfully!"
             }
         }
+        stage('Credentials Demo') {
+            steps {
+                withCredentials([string(credentialsId: 'TEST_SECRET', variable: 'MY_VAR')]) {
+                    sh 'echo "Secret value is: $MY_VAR"'
+                    sh 'echo "Build triggered by: ${env.BUILD_USER}"'
+                }
+            }
     }
 
     post {

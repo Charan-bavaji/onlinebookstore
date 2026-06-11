@@ -1,17 +1,19 @@
 pipeline {
-    agent any
-
+    agent {
+        docker {
+            image 'maven:3.8.6-openjdk-11'
+            args '-v /root/.m2:/root/.m2'
+        }
+    }
     parameters {
         string(name: 'BRANCH', defaultValue: 'master', description: 'Branch to build')
         choice(name: 'DEPLOY_ENV', choices: ['dev', 'staging', 'prod'], description: 'Target environment')
     }
-
     environment {
         TOMCAT_URL = 'http://localhost:8090'
         APP_NAME   = 'onlinebookstore'
         WAR_FILE   = 'target/*.war'
     }
-
     stages {
         stage("git_checkout") {
             steps {
@@ -21,7 +23,6 @@ pipeline {
                 echo "repo cloned successfully"
             }
         }
-
         stage("build") {
             steps {
                 echo "building ${env.APP_NAME}..."
@@ -29,7 +30,6 @@ pipeline {
                 echo "build successful!"
             }
         }
-
         stage("prod warning") {
             when {
                 expression { params.DEPLOY_ENV == 'prod' }
@@ -39,7 +39,6 @@ pipeline {
                 echo "Make sure this has been tested in staging first!"
             }
         }
-
         stage("deploy") {
             when {
                 expression { params.BRANCH == 'master' }
@@ -58,9 +57,7 @@ pipeline {
                 echo "deployed successfully!"
             }
         }
-
     }
-
     post {
         success {
             echo "✅ Pipeline SUCCESS - ${env.APP_NAME} deployed to ${params.DEPLOY_ENV}"
